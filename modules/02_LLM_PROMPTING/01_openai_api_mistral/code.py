@@ -1,7 +1,16 @@
+import json
+from pathlib import Path
 from openai import OpenAI
 
+# Определяем путь к config.json
+current_script_path = Path(__file__).resolve().parent
+project_root = current_script_path.parents[2]
+config_path = project_root / "config.json"
 
-API_KEY = "..."
+with open(config_path, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+API_KEY = config["OPENROUTER_API_KEY"]
 BASE_URL = "https://api.mistral.ai/v1"
 MODEL_NAME = "mistral-small-latest"
 

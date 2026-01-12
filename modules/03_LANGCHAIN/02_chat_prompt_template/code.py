@@ -17,4 +17,5 @@ prompt_value = prompt_template.invoke(
         "current_time": current_datetime.time(),
     }
 )
+
 print(prompt_value.to_messages())

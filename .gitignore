@@ -2,3 +2,19 @@ venv
 OLD_LLM
 .idea
 __pycache__
+
+
+
+# Игнорируем секреты
+config.json
+keys.json
+secrets.json
+
+# Игнорируем виртуальное окружение (если еще нет)
+ds_env/
+venv/
+.env
+
+# Игнорируем кэш Python
+__pycache__/
+*.pyc
