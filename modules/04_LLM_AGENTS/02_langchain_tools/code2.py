@@ -1,6 +1,7 @@
 import json
 import time
 import os
+import sys
 from pathlib import Path
 
 # Импортируем ChatOpenAI, так как работаем через OpenRouter
@@ -10,22 +11,45 @@ from langchain_core.messages import HumanMessage
 from pydantic import Field
 
 # ==========================================
-# 1. ЗАГРУЗКА КОНФИГУРАЦИИ (Smart Search)
+# 1. DYNAMIC CONFIGURATION LOADING
 # ==========================================
-config_path = r"C:\D\обуч\stepik\LLM\Lectures\config.json"
 
+# Construct the path to config.json relative to the script's location
+# If config.json is in the same folder as this script:
+def load_config(filename="config.json"):
+    # Start at script location and traverse up parent directories
+    current_path = Path(__file__).resolve().parent
+    for parent in [current_path] + list(current_path.parents):
+        check_path = parent / filename
+        if check_path.exists():
+            return check_path
+    return None
+
+config_file = load_config()
+
+if not config_file:
+    print("❌ Critical Error: config.json not found in any parent directory.")
+    sys.exit(1)
+
+# Load the file...
+# ==========================================
+# MISSING STEP: READ THE FILE
+# ==========================================
 try:
-    with open(config_path, "r", encoding="utf-8") as f:
+    with open(config_file, "r", encoding="utf-8") as f:
         config = json.load(f)
-    print(f"✅ Конфигурация успешно загружена из: {config_path}")
-except FileNotFoundError:
-    print(f"❌ ОШИБКА: Файл не найден по пути: {config_path}")
-    print("Проверьте, точно ли файл лежит именно там.")
-    exit(1)
+    print(f"✅ Configuration loaded successfully from: {config_file}")
+except json.JSONDecodeError:
+    print(f"❌ Error: The file at {config_file} contains invalid JSON.")
+    sys.exit(1)
+except Exception as e:
+    print(f"❌ Unexpected error loading config: {e}")
+    sys.exit(1)
 
-# Настройка клиента
+# ==========================================
+# 2. CLIENT SETUP
+# ==========================================
 API_KEY = config["OPENROUTER_API_KEY"]
-# Используем бесплатную модель Mistral через OpenRouter
 MODEL_NAME = config["MODEL_NAME"]
 
 # ==========================================
